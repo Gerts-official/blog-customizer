@@ -4,17 +4,20 @@ import { ArrowButton } from './ArrowButton';
 
 const meta: Meta<typeof ArrowButton> = {
 	component: ArrowButton,
+	argTypes: {
+		open: { control: 'boolean' },
+		onToggle: { action: 'clicked' },
+	},
 };
 
 export default meta;
 type Story = StoryObj<typeof ArrowButton>;
 
 export const ArrowButtonStory: Story = {
-	render: () => {
-		return (
-			<>
-				<ArrowButton />
-			</>
-		);
+	args: {
+		open: false,
+		onToggle: () => {
+			console.log('clicked');
+		},
 	},
 };
