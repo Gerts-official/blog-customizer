@@ -2,7 +2,7 @@ import { ArrowButton } from 'components/arrow-button';
 import { Button } from 'components/button';
 
 import styles from './ArticleParamsForm.module.scss';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import clsx from 'clsx';
 import {
 	ArticleStateType,
@@ -18,6 +18,7 @@ import { Text } from 'components/text/Text';
 import { Select } from '../select/Select';
 import { RadioGroup } from '../radio-group/RadioGroup';
 import { Separator } from '../separator/Separator';
+import { useClose } from './hooks/useClose';
 
 type ArticleParamsFormProps = {
 	currentArticleState: ArticleStateType;
@@ -29,11 +30,11 @@ export const ArticleParamsForm = ({
 	setCurrentArticleState,
 }: ArticleParamsFormProps) => {
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 	const [selectArticleState, setSelectArticleState] =
 		useState<ArticleStateType>(currentArticleState);
 
-	const handleToggle = () => setIsOpen(!isOpen);
+	const handleToggle = () => setIsMenuOpen(!isMenuOpen);
 
 	const handleChange = (key: keyof ArticleStateType, value: OptionType) => {
 		setSelectArticleState({ ...selectArticleState, [key]: value });
@@ -50,35 +51,19 @@ export const ArticleParamsForm = ({
 		setSelectArticleState(defaultArticleState);
 	};
 
-	useEffect(() => {
-		// Функция для обработки кликов вне сайдбара
-		const handleClickOutside = (event: MouseEvent) => {
-			// Проверяем, был ли клик вне контейнера при открытом окне
-			if (
-				containerRef.current &&
-				!containerRef.current.contains(event.target as Node) &&
-				isOpen
-			) {
-				handleToggle(); // Закрываем сайдбар
-			}
-		};
-
-		// Добавляем слушатель события клика
-		document.addEventListener('mousedown', handleClickOutside);
-
-		// Убираем слушатель при размонтировании компонента
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside);
-		};
-	}, [handleToggle]);
+	useClose({
+		isOpen: isMenuOpen,
+		onClose: handleToggle,
+		rootRef: containerRef,
+	});
 
 	return (
 		<>
-			<ArrowButton open={isOpen} onToggle={handleToggle} />
+			<ArrowButton open={isMenuOpen} onToggle={handleToggle} />
 			<aside
 				ref={containerRef}
 				className={clsx(styles.container, {
-					[styles.container_open]: isOpen,
+					[styles.container_open]: isMenuOpen,
 				})}>
 				<form
 					className={styles.form}
