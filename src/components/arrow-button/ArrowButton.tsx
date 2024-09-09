@@ -10,6 +10,7 @@ export type ArrowButtonProps = {
 	open: boolean;
 	/** Функция для обработки открытия/закрытия формы */
 	onToggle: OnClick;
+	/** Функция для обработки закрытия формы */
 };
 
 export const ArrowButton = ({ open, onToggle }: ArrowButtonProps) => {
